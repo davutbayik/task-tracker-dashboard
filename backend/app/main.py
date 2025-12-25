@@ -1,16 +1,11 @@
 # Import necessary libraries
-import os
 from datetime import datetime, timezone, date
 from typing import Optional
 from contextlib import asynccontextmanager
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Session, create_engine, select
-
-# Load environment variables
-load_dotenv()
 
 # Hard-coded team members
 TEAM_MEMBERS = [
@@ -48,7 +43,7 @@ def validate_priority(value: Optional[str]) -> str:
 
 
 # Initialize the Sqlite DB usign SQLModel (Sqlite can be replaced with PostgreSQL in production stages)
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = "sqlite:///./tasks.db"
 db_engine = create_engine(DATABASE_URL, echo=False)
 
 
@@ -87,7 +82,7 @@ class TaskUpdate(BaseModel):
 async def lifespan(app: FastAPI):
     SQLModel.metadata.create_all(db_engine)
     yield
-    
+
     
 # Create and initialize the FastAPI App
 app = FastAPI(title="Task Tracker API", lifespan=lifespan)
@@ -98,7 +93,7 @@ app = FastAPI(title="Task Tracker API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        os.getenv("ALLOW_ORIGIN_URL"),
+        "http://localhost:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
