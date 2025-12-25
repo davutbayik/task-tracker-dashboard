@@ -87,7 +87,7 @@ npm run dev
 
 App runs at:  
 👉 **http://localhost:5173** (Vite default)  
-or 
+or\
 👉 **http://localhost:{specified_port}**
 
 ---
